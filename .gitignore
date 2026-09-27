@@ -1,0 +1,33 @@
+# Database & Security secrets (Very Important!)
+.env
+*.env
+.env.local
+config.json
+secrets.sql
+
+# Python build artefacts & local environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+.streamlit/
+
+# Editor & IDE settings
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+push.bat
+push.sh
+
+# Logs and temporary backups
+*.log
+*.tmp
+*.bak
+*.sql.bak
