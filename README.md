@@ -1,102 +1,127 @@
 # Pharmacy Tracker DB
 
-Interactive inventory & transaction management dashboard for a pharmacy,
-built as a single-file Streamlit application backed by PostgreSQL.
+An interactive inventory and transaction management dashboard for modern pharmacy operations, built as a single-file **Streamlit** application backed by **PostgreSQL 18**.
 
-Every database object shown in the UI (tables, indexes, functions, procedures,
-triggers, roles and grants) is discovered **live** from `pg_catalog`, so the
-dashboard always reflects the real state of the database rather than hardcoded
-values.
+Unlike static dashboards, every database object displayed in the user interface—including tables, indexes, functions, procedures, triggers, roles, and grants—is dynamically discovered live from `pg_catalog`. This ensures the application always reflects the real-time state and schema of your PostgreSQL database.
 
-## Tech stack
+---
+
+## 🌟 Key Features
+
+* **Role-Based Access Control (RBAC):** Supports Admin, Pharmacist, and Cashier logins that mirror actual database grants and privileges.
+* **Before vs. After Index Benchmarking:**
+* Runs performance queries twice within a transaction block.
+* Dynamically toggles sequential and index scans using `SET LOCAL enable_indexscan / enable_bitmapscan`.
+* Generates execution speed-up ratios along with full `EXPLAIN (ANALYZE, BUFFERS)` execution plans.
+
+
+* **Live Schema Explorer:** Full inspection of tables, columns, constraints, B-tree indexes, triggers, PL/pgSQL functions, procedures, and view definitions.
+* **Security Inspector:** Real-time visibility into database role memberships, table/column grants, Row-Level Security (RLS) status, and function execution privileges.
+* **DML & Transaction Playground:** Perform safe Insert, Update, and Delete operations with role-based checks, plus transactional calls for sales, returns, and inventory write-offs.
+
+---
+
+## 🛠️ Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Front end | Streamlit |
-| Language | Python 3 |
-| Database | PostgreSQL 18 (`pharmacy_tracker_db`, localhost:5432) |
-| Driver | `psycopg2` |
-| Data frames | pandas |
+| --- | --- |
+| **Front End** | [Streamlit](https://streamlit.io/?utm_source=gemini) |
+| **Language** | Python 3.10+ |
+| **Database** | PostgreSQL 18 (`pharmacy_tracker_db` @ `localhost:5432`) |
+| **Database Driver** | `psycopg2` |
+| **Data Processing** | `pandas` |
 
-## Features
+---
 
-- **Role-based login** (Admin / Pharmacist / Cashier) mirroring the real
-  database grants.
-- **Before vs After index benchmark** — runs each query twice inside a
-  transaction, forcing a sequential scan and then an index scan via
-  `SET LOCAL enable_indexscan / enable_bitmapscan`, and reports the real
-  speed-up ratio plus the `EXPLAIN (ANALYZE, BUFFERS)` plan for both runs.
-- **Live schema explorer** — tables, columns, constraints, indexes, triggers,
-  functions, procedures and view definitions.
-- **Security inspector** — role memberships, table/column grants, RLS status
-  and function privileges.
-- **DML playground** — insert, update and delete with role-based permission
-  checks, plus sale / return / write-off transaction calls.
+## 📂 Project Layout
 
-## Requirements
+```text
+.
+├── app.py                                  # Main Streamlit dashboard application (Single-file)
+├── requirements.txt                        # Python package dependencies
+└── Pharmacy_DB_Consolidated_Coding_Sheet.sql   # SQL reference sheet (DDL, Functions, Triggers, RLS)
 
-- Python 3.10+
-- PostgreSQL 18 with a `pharmacy_tracker_db` database
-- `psycopg2` and `streamlit` installed
+```
 
-## Setup
+---
+
+## ⚙️ Prerequisites & Installation
+
+### Requirements
+
+* **Python:** `3.10` or higher
+* **Database:** PostgreSQL 18 with a running `pharmacy_tracker_db` database instance
+
+### 1. Clone & Install Dependencies
+
+Clone this repository and install the required Python packages:
 
 ```bash
+git clone https://github.com/YOUR_USERNAME/pharmacy-tracker-db.git
+cd pharmacy-tracker-db
 pip install -r requirements.txt
+
 ```
 
-Set the database password as an environment variable (the app **never**
-stores it in source code):
+### 2. Configure Database Password
 
+For security, the application reads your PostgreSQL password from an environment variable rather than hardcoding credentials into source code.
+
+* **PowerShell (Windows):**
 ```powershell
-# PowerShell
 $env:PGPASSWORD = "your_pgadmin_password"
+
 ```
 
+
+* **Bash / Linux / macOS:**
 ```bash
-# bash / cmd
-export PGPASSWORD=your_pgadmin_password
+export PGPASSWORD="your_pgadmin_password"
+
 ```
 
-If `PGPASSWORD` is not set the app shows a friendly error and stops.
 
-## Run
+* **Command Prompt (CMD):**
+```cmd
+set PGPASSWORD=your_pgadmin_password
+
+```
+
+
+
+> ⚠️ **Note:** If `PGPASSWORD` is not set, the application will display an error message and exit safely.
+
+---
+
+## 🚀 Running the Application
+
+Execute the Streamlit application using:
 
 ```bash
 streamlit run app.py
-```
-
-Then open <http://localhost:8501>.
-
-## Demo logins
-
-The dashboard ships with throwaway sample logins so it can be demonstrated
-without seeding the `users` table first. **These are not real accounts.**
-
-| Username | Password | Role |
-|---|---|---|
-| `admin` | `admin123` | Admin |
-| `pharmacist` | `pharm123` | Pharmacist |
-| `cashier` | `cash123` | Cashier |
-
-Logins are checked against the `pharmacy_users` table first, then the real
-`users` table, and finally these demo credentials.
-
-## Database
-
-This repository contains the application code only — **it does not create the
-database.** You need a running PostgreSQL 18 instance with
-`pharmacy_tracker_db` already created and populated.
-
-`Pharmacy_DB_Consolidated_Coding_Sheet.sql` is included as a **reference**
-document covering indexing, PL/pgSQL programming, security and transaction
-control. Its DDL is reconstructed from the project reports, so verify it
-against your own schema before running anything against a real database.
-
-## Project layout
 
 ```
-app.py                                  Streamlit dashboard (single file)
-requirements.txt                        Python dependencies
-Pharmacy_DB_Consolidated_Coding_Sheet.sql   SQL reference sheet
-```
+
+Once started, open your browser and navigate to `http://localhost:8501`.
+
+---
+
+## 🔑 Demo Credentials
+
+The dashboard includes built-in throwaway sample accounts for testing and demonstration purposes without requiring pre-seeded user rows:
+
+| Username | Password | Assigned Role |
+| --- | --- | --- |
+| `admin` | `admin123` | **Admin** |
+| `pharmacist` | `pharm123` | **Pharmacist** |
+| `cashier` | `cash123` | **Cashier** |
+
+> **Authentication Hierarchy:** The application checks user credentials against the `pharmacy_users` table first, falls back to the `users` table, and finally verifies against the demo credentials above.
+
+---
+
+## 🗄️ Database Setup & Reference
+
+* This repository contains the application code and reference scripts. It does not automatically create or seed the PostgreSQL database.
+* Ensure you have a running PostgreSQL 18 instance with `pharmacy_tracker_db` created prior to launching the dashboard.
+* **`Pharmacy_DB_Consolidated_Coding_Sheet.sql`** is provided as a reference document covering indexing strategies, PL/pgSQL procedures/functions, database security, and transaction control. Verify its DDL against your specific database setup before executing scripts in a production environment.
